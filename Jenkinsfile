@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  triggers {
+    cron 'H/30 11 * * *'
+  }
+
   stages {
     stage('Download & Build') {
       steps {
