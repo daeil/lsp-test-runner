@@ -19,6 +19,12 @@ pipeline {
       }
     }
 
+    stage('Email') {
+      steps {
+        emailext(subject: 'Nightly Build Test Result', attachLog: true, body: 'Nightly Build Test Result', to: 'dean.kwon@windriver.com', from: 'Dean.Kwon@windriver.com')
+      }
+    }
+
   }
   triggers {
     cron('H(30-50) 11 * * 1-5')
