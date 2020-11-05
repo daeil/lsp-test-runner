@@ -21,6 +21,12 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
       }
     }
 
+    stage('') {
+      steps {
+        emailext(subject: 'LSP Daily Test Rport', attachLog: true, body: 'LSP Daily Test Rport', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+      }
+    }
+
   }
   triggers {
     cron('H(30-50) 11 * * 1-5')
