@@ -3,7 +3,9 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        env.BUILD_RESULT=sh(script:"echo 'Download & Build' BUILD_RESULT=123").trim()
+        script {
+          env.BUILD_RESULT=sh(script:"echo 'Download & Build' BUILD_RESULT=123").trim()
+        }
       }
     }
 
@@ -19,9 +21,11 @@ pipeline {
     stage('Single Test') {
       steps {
         catchError() {
-          env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'").trim()
-          sh '''echo "single tests"
-                 export SINGLE_TEST_RESULT=1 '''
+          script {
+            env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'").trim()
+            sh '''echo "single tests"
+                   export SINGLE_TEST_RESULT=1 '''
+          }
         }
       }
     }
