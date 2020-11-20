@@ -3,8 +3,7 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        sh '''echo "Download & Build"
-BUILD_RESULT=123'''
+        env.BUILD_RESULT=sh(script'''echo "Download & Build" BUILD_RESULT=123''').trim()
       }
     }
 
@@ -20,6 +19,7 @@ BUILD_RESULT=123'''
     stage('Single Test') {
       steps {
         catchError() {
+          env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'").trim()
           sh '''echo "single tests"
                  export SINGLE_TEST_RESULT=1 '''
         }
