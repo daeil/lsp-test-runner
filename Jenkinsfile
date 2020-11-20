@@ -4,7 +4,7 @@ pipeline {
     stage('Download & Build') {
       steps {
         sh '''echo "Download & Build"
-BUILD_RESULT = 123'''
+BUILD_RESULT=123'''
       }
     }
 
