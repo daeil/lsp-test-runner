@@ -3,31 +3,45 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
-mkdir -p ${HOME}/lsp-dev-nightly-test;
-docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh'''
+        sh '''echo "Download & Build"
+export BUILD_RESULT=123'''
       }
     }
 
     stage('Composite Test') {
       steps {
         catchError() {
-          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-composite-test.sh'
+          sh '''echo "composite tests"
+export '''
         }
+
       }
     }
 
     stage('Single Test') {
       steps {
         catchError() {
-          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-single-test.sh'
+          sh '''echo "single tests"
+exit -1'''
         }
+
       }
     }
 
     stage('Send Reports') {
-      steps {
-        emailext(subject: 'LSP Daily Test Rport', attachLog: true, body: 'LSP Daily Test Rport', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+      parallel {
+        stage('Send Reports') {
+          steps {
+            emailext(subject: 'LSP Daily Test Rport', attachLog: true, body: 'LSP Daily Test Rport', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+          }
+        }
+
+        stage('') {
+          steps {
+            mail(subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', body: 'SUCCESS:$BUILD_RESULT', to: 'dean.kwon@windriver.com')
+          }
+        }
+
       }
     }
 
