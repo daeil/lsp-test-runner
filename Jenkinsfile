@@ -32,13 +32,13 @@ exit -1'''
       parallel {
         stage('Send Reports') {
           steps {
-            emailext(subject: 'LSP Daily Test Rport', attachLog: true, body: 'LSP Daily Test Rport', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+            emailext(subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', attachLog: true, body: 'Mail: $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!, BuildResult $BUILD_RESULT', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
           }
         }
 
-        stage('') {
+        stage('error') {
           steps {
-            mail(subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', body: 'SUCCESS:$BUILD_RESULT', to: 'dean.kwon@windriver.com')
+            mail(subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', body: 'Email: SUCCESS:$BUILD_RESULT', to: 'dean.kwon@windriver.com')
           }
         }
 
