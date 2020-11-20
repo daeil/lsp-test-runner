@@ -28,7 +28,7 @@ BUILD_RESULT=123'''
 
     stage('Send Reports') {
       steps {
-        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '${DEFAULT_CONTENT}\nBUILD_RESULT=$BUILD_RESULT, COMPOSITE_TEST_RESULT=$COMPOSITE_TEST_RESULT, SINGLE_TEST_RESULT=$SINGLE_TEST_RESULT', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '${DEFAULT_CONTENT}\nBUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
       }
     }
 
