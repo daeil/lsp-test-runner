@@ -29,22 +29,16 @@ exit -1'''
     }
 
     stage('Send Reports') {
-      parallel {
-        stage('Send Reports') {
-          steps {
-            emailext(subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', attachLog: true, body: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:  Check console output at $BUILD_URL to view the results.', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
-          }
-        }
-
-        stage('error') {
-          steps {
-            mail(subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', body: 'Email: SUCCESS:$BUILD_RESULT', to: 'dean.kwon@windriver.com')
-          }
-        }
-
+      steps {
+        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '${DEFAULT_CONTENT}', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
       }
     }
 
+  }
+  environment {
+    BUILD_RESULT = '0'
+    COMPOSITE_TEST_RESULT = '0'
+    SINGLE_TEST_RESULT = '0'
   }
   triggers {
     cron('H(30-50) 11 * * 1-5')
