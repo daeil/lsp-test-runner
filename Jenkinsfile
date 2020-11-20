@@ -4,7 +4,7 @@ pipeline {
     stage('Download & Build') {
       steps {
         sh '''echo "Download & Build"
-export BUILD_RESULT=123'''
+BUILD_RESULT = 123'''
       }
     }
 
@@ -12,9 +12,8 @@ export BUILD_RESULT=123'''
       steps {
         catchError() {
           sh '''echo "composite tests"
-export '''
+          COMPOSITE_TEST_RESULT="SUCCESS" '''
         }
-
       }
     }
 
@@ -22,15 +21,15 @@ export '''
       steps {
         catchError() {
           sh '''echo "single tests"
-exit -1'''
+                 export SINGLE_TEST_RESULT=1 '''
         }
-
       }
     }
 
     stage('Send Reports') {
       steps {
-        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '${DEFAULT_CONTENT}', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '${DEFAULT_CONTENT}
+                 BUILD_RESULT=$BUILD_RESULT, COMPOSITE_TEST_RESULT=$COMPOSITE_TEST_RESULT, SINGLE_TEST_RESULT=$SINGLE_TEST_RESULT', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
       }
     }
 
