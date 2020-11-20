@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        env.BUILD_RESULT=sh(script'''echo "Download & Build" BUILD_RESULT=123''').trim()
+        env.BUILD_RESULT=sh(script:"echo 'Download & Build' BUILD_RESULT=123").trim()
       }
     }
 
