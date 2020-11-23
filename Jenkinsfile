@@ -3,34 +3,25 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        script {
-          env.BUILD_RESULT=sh(script:"echo 'Download & Build' BUILD_RESULT=123")
-        }
-
+        sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
+mkdir -p ${HOME}/lsp-dev-nightly-test;
+docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh'''
       }
     }
 
     stage('Composite Test') {
       steps {
         catchError() {
-          sh '''echo "composite tests"
-          COMPOSITE_TEST_RESULT="SUCCESS" '''
+          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-composite-test.sh'
         }
-
       }
     }
 
     stage('Single Test') {
       steps {
         catchError() {
-          script {
-            env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'")
-            sh '''echo "single tests"
-export SINGLE_TEST_RESULT=1 '''
-          }
-
+          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-single-test.sh'
         }
-
       }
     }
 
