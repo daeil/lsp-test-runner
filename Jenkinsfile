@@ -28,7 +28,7 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
     stage('Send Reports') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
-        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '''${DEFAULT_CONTENT}''', compressLog: true, saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
+        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '''${DEFAULT_CONTENT}''', compressLog: true, saveOutput: true, to: 'lsp-wrs@windriver.com', from: 'Jenkins')
       }
     }
 
