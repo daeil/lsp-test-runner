@@ -11,16 +11,32 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
 
     stage('Composite Test') {
       steps {
-        sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-composite-test.sh'
+        catchError() {
+          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-composite-test.sh'
+        }
       }
     }
 
     stage('Single Test') {
       steps {
-        sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-single-test.sh'
+        catchError() {
+          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-single-test.sh'
+        }
       }
     }
 
+    stage('Send Reports') {
+      steps {
+        sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
+        emailext(subject: '${DEFAULT_SUBJECT}', attachLog: true, body: '''${DEFAULT_CONTENT}''', compressLog: true, saveOutput: true, to: 'lsp-wrs@windriver.com', from: 'Jenkins')
+      }
+    }
+
+  }
+  environment {
+    BUILD_RESULT = '0'
+    COMPOSITE_TEST_RESULT = '0'
+    SINGLE_TEST_RESULT = '0'
   }
   triggers {
     cron('H(30-50) 11 * * 1-5')
