@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
 mkdir -p ${HOME}/lsp-dev-nightly-test;
-docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh'''
+docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh && ln -s  ${HOME}/data* ${HOME}/lsp-dev-nightly-test/lsp/data'''
       }
     }
 
