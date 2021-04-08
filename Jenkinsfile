@@ -5,14 +5,14 @@ pipeline {
       steps {
         sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
 mkdir -p ${HOME}/lsp-dev-nightly-test;
-docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh && ln -s  ${HOME}/data* ${HOME}/lsp-dev-nightly-test/lsp/data'''
+docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh'''
       }
     }
 
     stage('Composite Test') {
       steps {
         catchError() {
-          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-composite-test.sh'
+          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --mount type=bind,source=${HOME}/data,target=/home/jenkins/lsp-dev/lsp/data/ jenkins bin/lsp-composite-test.sh'
         }
 
       }
@@ -21,7 +21,7 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
     stage('Single Test') {
       steps {
         catchError() {
-          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev jenkins bin/lsp-single-test.sh'
+          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --mount type=bind,source=${HOME}/data,target=/home/jenkins/lsp-dev/lsp/data/ jenkins bin/lsp-single-test.sh'
         }
 
       }
@@ -30,7 +30,7 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
     stage('Send Reports') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
-        emailext(subject: '${DEFAULT_SUBJECT}', body: '${DEFAULT_CONTENT}', saveOutput: true, to: 'lsp-wrs@windriver.com', from: 'Jenkins')
+        emailext(subject: '${DEFAULT_SUBJECT}', body: '${DEFAULT_CONTENT}', saveOutput: true, to: 'dean.kwon@windriver.com', from: 'Jenkins')
       }
     }
 
