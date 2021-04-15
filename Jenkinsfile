@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
 mkdir -p ${HOME}/lsp-dev-nightly-test;
-docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --add-host confluence.mobis.co.kr:192.168.224.4 jenkins bin/lsp-build.sh'''
+docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --net host jenkins bin/lsp-build.sh'''
       }
     }
 
@@ -27,10 +27,16 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
       }
     }
 
-    stage('Send Reports') {
+    stage('Profiling') {
+      steps {
+        sh 'docker run -t --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --net host jenkins bin/run-profile.sh'
+      }
+    }
+
+    stage('Send Report') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
-        emailext(subject: '${DEFAULT_SUBJECT}', body: '${DEFAULT_CONTENT}', saveOutput: true, to: 'lsp-wrs@windriver.com', from: 'Jenkins')
+        emailext(to: 'lsp-wrs@windriver.com', saveOutput: true, body: '${DEFAULT_CONTENT}', subject: '${DEFAULT_SUBJECT}', from: 'Jenkins')
       }
     }
 
