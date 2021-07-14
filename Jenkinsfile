@@ -27,16 +27,10 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
       }
     }
 
-    stage('Profiling') {
-      steps {
-        sh 'docker run -t --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --net host jenkins bin/run-profile.sh'
-      }
-    }
-
     stage('Send Report') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
-        emailext(to: 'dean.kwon@windriver.com', saveOutput: true, body: '${DEFAULT_CONTENT}', subject: '${DEFAULT_SUBJECT}', from: 'Jenkins')
+        emailext(to: 'LSP-WRS@windriver.com', saveOutput: true, body: '${DEFAULT_CONTENT}', subject: '${DEFAULT_SUBJECT}', from: 'Jenkins')
       }
     }
 
