@@ -20,7 +20,7 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
 
     stage('Single Test') {
       steps {
-        catchError(stageResult: 'FAIL') {
+        catchError(stageResult: 'FAILURE') {
           sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --mount type=bind,source=${HOME}/data,target=/home/jenkins/lsp-dev/lsp/data/ jenkins bin/lsp-single-test.sh'
         }
 
