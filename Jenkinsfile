@@ -5,23 +5,36 @@ pipeline {
       steps {
         sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
 mkdir -p ${HOME}/lsp-dev-nightly-test;
-docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --net host jenkins bin/lsp-build.sh'''
+cd ${HOME}/lsp-dev-nightly-test;
+
+repo init -u http://sel-lsp-gerrit.wrs.com:8080/lsp_manifest
+repo sync
+cd wrs/jenkins/lsp-test-runner
+
+make docker-clean
+make docker-make-image
+make docker-build-lsp'''
       }
     }
 
-    stage('Composite Test') {
+    stage('Run Test') {
       steps {
         catchError() {
-          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --mount type=bind,source=${HOME}/data,target=/home/jenkins/lsp-dev/lsp/data/ jenkins bin/lsp-composite-test.sh'
+          sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+make docker-run-composite-test
+'''
+          sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+make docker-run-unit-test'''
         }
 
       }
     }
 
-    stage('Single Test') {
+    stage('Equivalence Test') {
       steps {
-        catchError(stageResult: 'FAILURE') {
-          sh 'docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}/lsp-dev-nightly-test,target=/home/jenkins/lsp-dev --mount type=bind,source=${HOME}/data,target=/home/jenkins/lsp-dev/lsp/data/ jenkins bin/lsp-single-test.sh'
+        warnError(message: 'Equivalence Test') {
+          sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+make docker-run-unit-test'''
         }
 
       }
@@ -30,7 +43,7 @@ docker run --rm -w /home/jenkins --user jenkins --mount type=bind,source=${HOME}
     stage('Send Report') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
-        emailext(to: 'dean.kwon@windriver.com', saveOutput: true, body: '${DEFAULT_CONTENT}', subject: '${DEFAULT_SUBJECT}', from: 'Jenkins')
+        emailext(subject: '${DEFAULT_SUBJECT}', body: '${DEFAULT_CONTENT}', to: 'dean.kwon@windriver.com')
       }
     }
 
