@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        sh '''rm -rf ${HOME}/lsp-dev-nightly-test;
+        sh '''sudo rm -rf ${HOME}/lsp-dev-nightly-test;
 mkdir -p ${HOME}/lsp-dev-nightly-test;
 cd ${HOME}/lsp-dev-nightly-test;
 
