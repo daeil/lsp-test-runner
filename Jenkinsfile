@@ -35,6 +35,24 @@ make docker-run-unit-test'''
         warnError(message: 'Equivalence Test') {
           sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
 make docker-run-equiv-test'''
+          sh '''cd ${HOME}/lsp-dev-nightly-test/lsp/
+repo download -c lsp 1348
+
+cd tool/profile
+
+# ensure to stop containers
+make docker-clean
+
+make docker-make-image
+
+# BUILD
+make docker-build-lsp LSP_BRANCH=$CHECKOUT_BRANCH
+
+# RUN PROFILING
+make docker-run-lsp LOG_FILE=log_210224_111146_FRLSP.bin
+make docker-run-lsp LOG_FILE=log_210302_113433_FRLSP.bin
+make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin
+'''
         }
 
       }
