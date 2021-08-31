@@ -34,7 +34,7 @@ make docker-run-unit-test'''
       steps {
         warnError(message: 'Equivalence Test') {
           sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
-make docker-run-unit-test'''
+make docker-run-equiv-test'''
         }
 
       }
