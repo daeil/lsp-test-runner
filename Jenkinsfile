@@ -11,7 +11,6 @@ repo init -u http://sel-lsp-gerrit.wrs.com:8080/lsp_manifest
 repo sync
 cd wrs/jenkins/lsp-test-runner
 
-make docker-clean
 make docker-make-image
 make docker-build-lsp'''
       }
