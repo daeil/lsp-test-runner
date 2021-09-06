@@ -65,6 +65,15 @@ make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin
       }
     }
 
+    stage('Clean up') {
+      steps {
+        sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+make docker-clean
+'''
+        cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, cleanupMatrixParent: true, deleteDirs: true, disableDeferredWipeout: true)
+      }
+    }
+
   }
   environment {
     BUILD_RESULT = '0'
