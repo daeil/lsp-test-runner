@@ -51,7 +51,7 @@ make docker-run-equiv-test'''
           sh '''# BUILD
 
 cd wrs/jenkins/wcet-checker
-make docker-build-lsp LSP_BRANCH=$CHECKOUT_BRANCH
+make docker-build-lsp LSP_BRANCH=wr_dev
 
 '''
           sh '''# log_210224_111146_FRLSP
@@ -82,8 +82,7 @@ make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin'''
 
     stage('Clean up') {
       steps {
-        sh '''cd lsp/wrs/jenkins/lsp-test-runner
-
+        sh '''cd wrs/jenkins/lsp-test-runner
 make docker-clean
 
 cd -
