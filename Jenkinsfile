@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        sh '''repo init -u http://sel-lsp-gerrit.wrs.com:8080/lsp_manifest lsp
+        sh '''repo init -u http://sel-lsp-gerrit.wrs.com:8080/lsp_manifest
 repo sync
 cd wrs/jenkins/lsp-test-runner
 
