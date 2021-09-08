@@ -9,7 +9,8 @@ cd wrs/jenkins/lsp-test-runner
 
 make docker-clean
 make docker-make-image
-make docker-build-lsp'''
+make docker-prepare-lsp
+'''
       }
     }
 
