@@ -7,6 +7,7 @@ pipeline {
 repo sync
 cd wrs/jenkins/lsp-test-runner
 
+make docker-clean
 make docker-make-image
 make docker-build-lsp'''
       }
@@ -46,20 +47,25 @@ make docker-run-equiv-test'''
     stage('WCET') {
       steps {
         warnError(message: 'WCET Test') {
-          sh '''cd lsp/tool/profile
-repo download -c lsp 1348
+          sh '''# BUILD
 
-# BUILD
+cd wrs/jenkins/wcet-checker
 make docker-build-lsp LSP_BRANCH=$CHECKOUT_BRANCH
 
 '''
-          sh '''cd lsp/tool/profile
+          sh '''# log_210224_111146_FRLSP
+
+cd wrs/jenkins/wcet-checker
 make docker-run-lsp LOG_FILE=log_210224_111146_FRLSP.bin
 '''
-          sh '''cd lsp/tool/profile
+          sh '''# log_210302_113433_FRLSP
+
+cd wrs/jenkins/wcet-checker
 make docker-run-lsp LOG_FILE=log_210302_113433_FRLSP.bin
 '''
-          sh '''cd lsp/tool/profile
+          sh '''# log_210311_134630_FRLSP
+
+cd wrs/jenkins/wcet-checker
 make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin'''
         }
 
