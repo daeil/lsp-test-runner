@@ -12,24 +12,37 @@ make docker-build-lsp'''
       }
     }
 
-    stage('Run Test') {
+    stage('CompositeTest') {
       steps {
         catchError() {
           sh '''cd wrs/jenkins/lsp-test-runner
 make docker-run-composite-test
 '''
-          sh '''cd wrs/jenkins/lsp-test-runner
-make docker-run-unit-test'''
         }
-
       }
     }
 
-    stage('Equivalence & WCET') {
+    stage('UnitTest') {
+      steps {
+        catchError() {
+          sh '''cd wrs/jenkins/lsp-test-runner
+make docker-run-unit-test'''
+        }
+      }
+    }
+   
+    stage('Equivalence') {
       steps {
         warnError(message: 'Equivalence Test') {
           sh '''cd wrs/jenkins/lsp-test-runner
 make docker-run-equiv-test'''
+        }
+      }
+    }
+
+    stage('WCET') {
+      steps {
+        warnError(message: 'WCET Test') {
           sh '''cd lsp/tool/profile
 repo download -c lsp 1348
 
@@ -42,10 +55,8 @@ make docker-run-lsp LOG_FILE=log_210302_113433_FRLSP.bin
 make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin
 '''
         }
-
       }
     }
-
     stage('Send Report') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
