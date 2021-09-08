@@ -51,6 +51,7 @@ make docker-run-equiv-test'''
           sh '''# BUILD
 
 cd wrs/jenkins/wcet-checker
+make docker-clean
 make docker-build-lsp LSP_BRANCH=wr_dev
 
 '''
@@ -86,6 +87,12 @@ make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin'''
 make docker-clean
 
 cd -
+
+cd wrs/jenkins/wcet-checker
+make docker-clean
+
+cd -
+
 sudo rm -rf lsp wrs'''
         cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, cleanupMatrixParent: true, deleteDirs: true, disableDeferredWipeout: true)
       }
