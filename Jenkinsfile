@@ -3,11 +3,7 @@ pipeline {
   stages {
     stage('Download & Build') {
       steps {
-        sh '''sudo rm -rf ${HOME}/lsp-dev-nightly-test;
-mkdir -p ${HOME}/lsp-dev-nightly-test;
-cd ${HOME}/lsp-dev-nightly-test;
-
-repo init -u http://sel-lsp-gerrit.wrs.com:8080/lsp_manifest
+        sh '''repo init -u http://sel-lsp-gerrit.wrs.com:8080/lsp_manifest lsp
 repo sync
 cd wrs/jenkins/lsp-test-runner
 
@@ -19,30 +15,23 @@ make docker-build-lsp'''
     stage('Run Test') {
       steps {
         catchError() {
-          sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+          sh '''cd wrs/jenkins/lsp-test-runner
 make docker-run-composite-test
 '''
-          sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+          sh '''cd wrs/jenkins/lsp-test-runner
 make docker-run-unit-test'''
         }
 
       }
     }
 
-    stage('Equivalence Test') {
+    stage('Equivalence & WCET') {
       steps {
         warnError(message: 'Equivalence Test') {
-          sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+          sh '''cd wrs/jenkins/lsp-test-runner
 make docker-run-equiv-test'''
-          sh '''cd ${HOME}/lsp-dev-nightly-test/lsp/
+          sh '''cd lsp/tool/profile
 repo download -c lsp 1348
-
-cd tool/profile
-
-# ensure to stop containers
-make docker-clean
-
-make docker-make-image
 
 # BUILD
 make docker-build-lsp LSP_BRANCH=$CHECKOUT_BRANCH
@@ -66,9 +55,12 @@ make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin
 
     stage('Clean up') {
       steps {
-        sh '''cd ${HOME}/lsp-dev-nightly-test/wrs/jenkins/lsp-test-runner
+        sh '''cd lsp/wrs/jenkins/lsp-test-runner
+
 make docker-clean
-'''
+
+cd -
+sudo rm -rf lsp wrs'''
         cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, cleanupMatrixParent: true, deleteDirs: true, disableDeferredWipeout: true)
       }
     }
