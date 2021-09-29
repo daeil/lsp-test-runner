@@ -77,7 +77,7 @@ make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin'''
     stage('Send Report') {
       steps {
         sh 'BUILD_RESULT=${BUILD_RESULT}, COMPOSITE_TEST_RESULT=${COMPOSITE_TEST_RESULT}, SINGLE_TEST_RESULT=${SINGLE_TEST_RESULT}'
-        emailext(subject: '${DEFAULT_SUBJECT}', body: '${DEFAULT_CONTENT}', to: 'dean.kwon@windriver.com')
+        emailext(subject: '${DEFAULT_SUBJECT}', body: '${DEFAULT_CONTENT}', to: 'lsp-wrs@windriver.com')
       }
     }
 
