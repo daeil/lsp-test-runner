@@ -55,20 +55,19 @@ make docker-clean
 make docker-build-lsp LSP_BRANCH=wr_dev
 
 '''
-          sh '''# log_210224_111146_FRLSP
-
+          sh '''# log_210916_102616
 cd wrs/jenkins/wcet-checker
-make docker-run-lsp LOG_FILE=log_210224_111146_FRLSP.bin
+make docker-run-lsp LOG_FILE=log_210916_102616.bin
 '''
-          sh '''# log_210302_113433_FRLSP
+          sh '''# log_210916_102916
 
 cd wrs/jenkins/wcet-checker
-make docker-run-lsp LOG_FILE=log_210302_113433_FRLSP.bin
+make docker-run-lsp LOG_FILE=log_210916_102916.bin
 '''
-          sh '''# log_210311_134630_FRLSP
+          sh '''# log_211005_160201
 
 cd wrs/jenkins/wcet-checker
-make docker-run-lsp LOG_FILE=log_210311_134630_FRLSP.bin'''
+make docker-run-lsp LOG_FILE=log_211005_160201.bin'''
         }
 
       }
